@@ -20,6 +20,12 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.things.pio.PeripheralManagerService;
+import com.google.android.things.pio.SpiDevice;
+
+import java.io.IOException;
+import java.util.List;
+
 /**
  * Skeleton of the main Android Things activity. Implement your device's logic
  * in this class.
@@ -42,15 +48,44 @@ import android.util.Log;
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    // SPI Device Name
+    private static final String SPI_DEVICE_NAME = "OLED";
+
+    private SpiDevice mDevice;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+
+        PeripheralManagerService manager = new PeripheralManagerService();
+        List<String> deviceList = manager.getSpiBusList();
+        if (deviceList.isEmpty()) {
+            Log.i(TAG, "No SPI bus available on this device.");
+        } else {
+            Log.i(TAG, "List of available devices: " + deviceList);
+        }
+
+        // Attempt to access the SPI device
+        try {
+            mDevice = manager.openSpiDevice(SPI_DEVICE_NAME);
+        } catch (IOException e) {
+            Log.w(TAG, "Unable to access SPI device", e);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
+
+        if (mDevice != null) {
+            try {
+                mDevice.close();
+                mDevice = null;
+            } catch (IOException e) {
+                Log.w(TAG, "Unable to close SPI device", e);
+            }
+        }
     }
 }
