@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.things.pio.I2cDevice;
 import com.google.android.things.pio.PeripheralManagerService;
 import com.google.android.things.pio.SpiDevice;
 
@@ -27,31 +28,22 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Skeleton of the main Android Things activity. Implement your device's logic
- * in this class.
- *
- * Android Things peripheral APIs are accessible through the class
- * PeripheralManagerService. For example, the snippet below will open a GPIO pin and
- * set it to HIGH:
- *
- * <pre>{@code
- * PeripheralManagerService service = new PeripheralManagerService();
- * mLedGpio = service.openGpio("BCM6");
- * mLedGpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
- * mLedGpio.setValue(true);
- * }</pre>
- *
- * For more complex peripherals, look for an existing user-space driver, or implement one if none
- * is available.
- *
+ * Skeleton of the main AMP Kernel and UI activity.
  */
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     // SPI Device Name
-    private static final String SPI_DEVICE_NAME = "OLED";
+    private static final String SPI_DEVICE_NAME = "SPITEST";
 
-    private SpiDevice mDevice;
+    // I2C Device Name
+    private static final String I2C_DEVICE_NAME = "I2CTEST";
+    // I2C Slave Address
+    private static final int I2C_ADDRESS = 0x7a;
+
+
+    private SpiDevice spiDevice;
+    private I2cDevice i2cDevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,18 +51,43 @@ public class MainActivity extends Activity {
         Log.d(TAG, "onCreate");
 
         PeripheralManagerService manager = new PeripheralManagerService();
-        List<String> deviceList = manager.getSpiBusList();
-        if (deviceList.isEmpty()) {
+
+        // Enumerate SPI busses
+        List<String> spiBusList = manager.getSpiBusList();
+        if (spiBusList.isEmpty()) {
             Log.i(TAG, "No SPI bus available on this device.");
         } else {
-            Log.i(TAG, "List of available devices: " + deviceList);
+            Log.i(TAG, "List of available devices: " + spiBusList);
         }
 
         // Attempt to access the SPI device
         try {
-            mDevice = manager.openSpiDevice(SPI_DEVICE_NAME);
+            spiDevice = manager.openSpiDevice(SPI_DEVICE_NAME);
         } catch (IOException e) {
             Log.w(TAG, "Unable to access SPI device", e);
+        }
+
+        // Enumerate I2C busses
+        List<String> i2cBusList = manager.getI2cBusList();
+        if (i2cBusList.isEmpty()) {
+            Log.i(TAG, "No I2C bus available on this device.");
+        } else {
+            Log.i(TAG, "List of available devices: " + i2cBusList);
+        }
+
+        // Attempt to access the I2C device
+        try {
+            i2cDevice = manager.openI2cDevice(I2C_DEVICE_NAME, I2C_ADDRESS);
+        } catch (IOException e) {
+            Log.w(TAG, "Unable to access I2C device", e);
+        }
+
+        // Enumerate GPIO ports
+        List<String> portList = manager.getGpioList();
+        if (portList.isEmpty()) {
+            Log.i(TAG, "No GPIO port available on this device.");
+        } else {
+            Log.i(TAG, "List of available ports: " + portList);
         }
     }
 
@@ -79,12 +96,21 @@ public class MainActivity extends Activity {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
 
-        if (mDevice != null) {
+        if (spiDevice != null) {
             try {
-                mDevice.close();
-                mDevice = null;
+                spiDevice.close();
+                spiDevice = null;
             } catch (IOException e) {
                 Log.w(TAG, "Unable to close SPI device", e);
+            }
+        }
+
+        if (i2cDevice != null) {
+            try {
+                i2cDevice.close();
+                i2cDevice = null;
+            } catch (IOException e) {
+                Log.w(TAG, "Unable to close I2C device", e);
             }
         }
     }
