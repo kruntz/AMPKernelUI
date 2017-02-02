@@ -17,6 +17,7 @@
 package it.oltrenoi.ampkernelui;
 
 import android.app.Activity;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -26,6 +27,8 @@ import com.google.android.things.pio.SpiDevice;
 
 import java.io.IOException;
 import java.util.List;
+
+import it.oltrenoi.ampkernelui.oled.Ssd1306;
 
 /**
  * Skeleton of the main AMP Kernel and UI activity.
@@ -89,6 +92,15 @@ public class MainActivity extends Activity {
         } else {
             Log.i(TAG, "List of available ports: " + portList);
         }
+
+        Ssd1306 oledDisplay = new Ssd1306(i2cDevice);
+        oledDisplay.begin();
+        Paint paint = new Paint();
+
+        paint.setUnderlineText(true);
+        paint.setFakeBoldText(true);
+        paint.setTextSize(8f);
+        oledDisplay.getCanvas().drawText("Kick", 0f, 0f, paint);
     }
 
     @Override
