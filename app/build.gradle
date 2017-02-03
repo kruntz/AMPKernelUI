@@ -4,8 +4,8 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "com.example.androidthings.myproject"
-        minSdkVersion 24
+        applicationId "it.oltrenoi.ampkernelui"
+        minSdkVersion 25
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
