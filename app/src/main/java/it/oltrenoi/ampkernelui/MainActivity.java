@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     // I2C Device Name
-    private static final String I2C_DEVICE_NAME = "I2CTEST";
+    private static final String I2C_DEVICE_NAME = "I2C1";
 
     private SpiDevice spiDevice;
     private I2cDevice i2cDevice;
