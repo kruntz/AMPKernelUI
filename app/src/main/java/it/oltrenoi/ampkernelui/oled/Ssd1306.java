@@ -108,7 +108,7 @@ public class Ssd1306 implements Closeable {
      * @param device I2C device of the display
      * @throws IOException
      */
-    /*package*/ Ssd1306(I2cDevice device) throws IOException {
+    public Ssd1306(I2cDevice device) throws IOException {
         init(device);
     }
 
