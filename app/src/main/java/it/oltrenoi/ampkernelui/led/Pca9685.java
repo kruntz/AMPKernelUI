@@ -96,6 +96,31 @@ public class Pca9685 implements Closeable {
         // Select MODE1 register
         // Restart
         mI2cDevice.writeRegByte(0x00, (byte) (mode | 0x80));
+
+        // Select LED0_ON_L register
+        mI2cDevice.writeRegByte(6, (byte) 0x00);
+        // Select LED0_ON_H register
+        mI2cDevice.writeRegByte(7, (byte) 0x00);
+        // Select LED1_ON_L register
+        mI2cDevice.writeRegByte(10, (byte) 0x00);
+        // Select LED1_ON_H register
+        mI2cDevice.writeRegByte(11, (byte) 0x00);
+        // Select LED2_ON_L register
+        mI2cDevice.writeRegByte(14, (byte) 0x00);
+        // Select LED2_ON_H register
+        mI2cDevice.writeRegByte(15, (byte) 0x00);
+        // Select LED0_ON_L register
+        mI2cDevice.writeRegByte(6 + 12, (byte) 0x00);
+        // Select LED0_ON_H register
+        mI2cDevice.writeRegByte(7 + 12, (byte) 0x00);
+        // Select LED1_ON_L register
+        mI2cDevice.writeRegByte(10 + 12, (byte) 0x00);
+        // Select LED1_ON_H register
+        mI2cDevice.writeRegByte(11 + 12, (byte) 0x00);
+        // Select LED2_ON_L register
+        mI2cDevice.writeRegByte(14 + 12, (byte) 0x00);
+        // Select LED2_ON_H register
+        mI2cDevice.writeRegByte(15 + 12, (byte) 0x00);
     }
 
     public void allLeds(final int pwmOffValue) throws IOException {
@@ -110,26 +135,17 @@ public class Pca9685 implements Closeable {
     }
 
     public void rgbLeds(final int led, final int redPwmOffValue, final int greenPwmOffValue, final int bluePwmOffValue) throws IOException {
-        // Select LED0_ON_L register
-        mI2cDevice.writeRegByte(12 * led + 6, (byte) 0x00);
-        // Select LED0_ON_H register
-        mI2cDevice.writeRegByte(12 * led + 7, (byte) 0x00);
+//        mI2cDevice.writeRegWord(12 * led + 8, (short) redPwmOffValue);
+//        mI2cDevice.writeRegWord(12 * led + 12, (short) greenPwmOffValue);
+//        mI2cDevice.writeRegWord(12 * led + 16, (short) bluePwmOffValue);
         // Select LED0_OFF_L register
         mI2cDevice.writeRegByte(12 * led + 8, (byte) (redPwmOffValue & 0xFF));
         // Select LED0_OFF_H register
         mI2cDevice.writeRegByte(12 * led + 9, (byte) (redPwmOffValue / 256));
-        // Select LED1_ON_L register
-        mI2cDevice.writeRegByte(12 * led + 10, (byte) 0x00);
-        // Select LED1_ON_H register
-        mI2cDevice.writeRegByte(12 * led + 11, (byte) 0x00);
         // Select LED1_OFF_L register
         mI2cDevice.writeRegByte(12 * led + 12, (byte) (greenPwmOffValue & 0xFF));
         // Select LED1_OFF_H register
         mI2cDevice.writeRegByte(12 * led + 13, (byte) (greenPwmOffValue / 256));
-        // Select LED2_ON_L register
-        mI2cDevice.writeRegByte(12 * led + 14, (byte) 0x00);
-        // Select LED2_ON_H register
-        mI2cDevice.writeRegByte(12 * led + 15, (byte) 0x00);
         // Select LED2_OFF_L register
         mI2cDevice.writeRegByte(12 * led + 16, (byte) (bluePwmOffValue & 0xFF));
         // Select LED2_OFF_H register
